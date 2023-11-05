@@ -1,0 +1,69 @@
+#include <Adafruit_LiquidCrystal.h>
+Adafruit_LiquidCrystal lcd_1(0);
+const int pinoBuzzer = 12; 
+const int pinoSensor = A1;
+const int pinoBttn = 2;
+int ledR = 10 ;
+int ledG = 6;
+int seg = 15;
+void setup(){
+	Serial.begin(9600);
+	pinMode(pinoSensor, INPUT); 
+	pinMode(pinoBuzzer, OUTPUT);
+	pinMode(ledR, OUTPUT);
+	pinMode(ledG, OUTPUT);
+	lcd_1.begin(16, 2); 
+}
+
+void loop(){
+	int sensor = analogRead(pinoSensor);
+	int btt = digitalRead(pinoBttn);
+	Serial.print("BOTAO :");
+	Serial.println(btt);
+	lcd_1.clear();
+	lcd_1.setCursor(0, 0);
+	lcd_1.print("Estado:");
+  
+if (sensor > 300 && btt == 1){
+	noTone(pinoBuzzer);
+	digitalWrite(ledR, LOW);
+	digitalWrite(ledG, HIGH);
+    lcd_1.clear();
+    while (seg<=15 and seg>=0){
+			lcd_1.setCursor(0, 0);
+			lcd_1.print("Estado:");
+          	lcd_1.setCursor(0, 1);
+          	lcd_1.print("Pausado por:");
+      		lcd_1.setCursor(13, 1);
+          	lcd_1.print(seg);
+          	lcd_1.print(" ");
+          	lcd_1.setCursor(15, 1);
+          	lcd_1.print("s");
+      		seg=seg-1; 
+          	delay (1000);
+         }
+		seg = 15;
+	}
+else if (sensor > 300){
+	lcd_1.setCursor(0, 1);
+ 	lcd_1.print("Gas Detectado");
+ 	tone(pinoBuzzer,392);
+	delay(1000);         
+	tone(pinoBuzzer,200);
+	digitalWrite(ledR, HIGH);
+	delay(1000);
+	digitalWrite(ledR, LOW);
+	delay(1000);
+	digitalWrite(ledR, HIGH);
+	digitalWrite(ledG, LOW);
+
+}
+else{
+	noTone(pinoBuzzer);
+	digitalWrite(ledR, LOW);
+	digitalWrite(ledG, HIGH);
+    lcd_1.setCursor(0, 1);
+	lcd_1.print("Livre de Gas");
+  	delay (2000);
+}
+}
